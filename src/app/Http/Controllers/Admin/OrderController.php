@@ -37,7 +37,9 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data = $request->except('services');
+        $dataServices = $request->only('services');
+
         $validator = Validator::make($data, OrderValidator());
 
         if($validator->fails()){

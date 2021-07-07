@@ -26,9 +26,7 @@ class OrderServiceResource extends JsonResource
             'quantity' => $this->quantity,
             'price' => $this->price,
             'status' => $this->status,
-            'service' => $this->service,
-            'order' => $this->order,
-            'tenant' => $this->tenant,
+            'service' => $this->service->name,
         ];
     }
 }

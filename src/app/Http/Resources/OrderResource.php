@@ -28,7 +28,7 @@ class OrderResource extends JsonResource
             'type' => $this->type,
             'observation' => $this->observation,
             'customer' => $this->customer,
-            'orderServices' => $this->orderServices,
+            'orderServices' => OrderServiceResource::collection($this->orderServices),
             'tenant' => $this->tenant,
         ];
     }
