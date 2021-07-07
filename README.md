@@ -41,7 +41,7 @@ php artisan key:generate
 ```
 
 ## Utilizando a API
-Após este processo de configuração inicial do ambiente, os endpoints estão aptos para serem utilizados. Foi utilizado um DB SEED para preencher alguns dados basicos iniciais para consumo da API. O Usuário criado para a autenticação inicial e geração do Token é o "usuario@hotmail.com" e senha "123".
+Após este processo de configuração inicial do ambiente, os endpoints estão aptos para serem utilizados. Foi utilizado um DB SEED para preencher alguns dados basicos iniciais para consumo da API. O Usuário criado para a autenticação inicial e geração do Token podem ser vistos e alterados em /src/database/seeds/UserSeeder.php
 
 Para auxilio e testes criei uma collection no postman, disponibilizada neste repositório na pasta /docs/LaravelAPI.postman_collection.json
 A Aplicação utiliza a autenticação modo Bearer.
