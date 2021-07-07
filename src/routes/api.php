@@ -12,8 +12,12 @@ Route::namespace('Admin')
         return response()->json(['message' => 'Laravel API', 'status' => 'Connected']);;
     });
 
-    Route::resource('tenants', 'TenantController');
-    Route::resource('customers', 'CustomerController');
+    Route::resource('customers', 'CustomerController',  ['except' => ['create', 'edit']]);
+    Route::resource('orders', 'OrderController',  ['except' => ['create', 'edit']]);
+    Route::resource('orderservices', 'OrderServiceController',  ['except' => ['create', 'edit']]);
+    Route::resource('services', 'ServiceController',  ['except' => ['create', 'edit']]);
+    Route::resource('tenants', 'TenantController',  ['except' => ['create', 'edit']]);
+    Route::resource('users', 'UserController',  ['except' => ['create', 'edit']]);
 });
 
 Route::group([

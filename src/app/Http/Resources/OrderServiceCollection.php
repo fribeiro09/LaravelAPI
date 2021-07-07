@@ -14,6 +14,8 @@ class OrderServiceCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'orderservices' => OrderServiceResource::collection($this->collection)
+        ];
     }
 }

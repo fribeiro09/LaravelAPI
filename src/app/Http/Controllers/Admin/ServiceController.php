@@ -3,10 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ServiceCollection;
+use App\Http\Resources\ServiceResource;
+use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ServiceController extends Controller
 {
+    private $repository;
+
+    public function __construct(Service $service)
+    {
+        $this->repository = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,17 +25,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $services = $this->repository->orderBy('id')->get();
+        return response(new ServiceCollection($services), 200);
     }
 
     /**
@@ -35,7 +37,17 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $validator = Validator::make($data, ServiceValidator());
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors(), 'message' => 'Validation Error'], 422);
+        }
+
+        $this->repository->fill($data);
+        $this->repository->save();
+
+        return response()->json($this->repository, 201);
     }
 
     /**
@@ -46,18 +58,11 @@ class ServiceController extends Controller
      */
     public function show($id)
     {
-        //
-    }
+        if(!$service = Service::find($id)) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return new ServiceResource($service);
     }
 
     /**
@@ -69,7 +74,22 @@ class ServiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $this->id = $id;
+        $validator = Validator::make($data, ServiceValidator());
+
+        if(!$service = Service::find($id)) {
+            return response()->json(['message' => 'Record not found',], 404);
+        }
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors(), 'message' => 'Validation Error'], 422);
+        }
+
+        $service->fill($data);
+        $service->save();
+
+        return response()->json($service, 200);
     }
 
     /**
@@ -80,6 +100,12 @@ class ServiceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if(!$service = Service::find($id)) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
+
+        $service->delete();
+
+        return response(['message' => 'The Record id #'.$id.' has been deleted'], 200);
     }
 }

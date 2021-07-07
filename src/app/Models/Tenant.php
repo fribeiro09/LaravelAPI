@@ -36,4 +36,9 @@ class Tenant extends Model
     {
         return $this->hasMany(Service::class, 'tenant_id', 'id');
     }
+
+    public function users()
+    {
+        return $this->hasMany(users::class, 'tenant_id', 'id');
+    }
 }

@@ -16,6 +16,6 @@ class CustomerCollection extends ResourceCollection
     {
         return [
             'customers' => CustomerResource::collection($this->collection)
-            ];
+        ];
     }
 }

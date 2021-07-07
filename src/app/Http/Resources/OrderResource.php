@@ -7,6 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class OrderResource extends JsonResource
 {
     /**
+     * The "data" wrapper that should be applied.
+     *
+     * @var string
+     */
+    public static $wrap = 'order';
+
+    /**
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -14,6 +21,15 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'date' => $this->date,
+            'status' => $this->status,
+            'type' => $this->type,
+            'observation' => $this->observation,
+            'customer' => $this->customer,
+            'orderServices' => $this->orderServices,
+            'tenant' => $this->tenant,
+        ];
     }
 }

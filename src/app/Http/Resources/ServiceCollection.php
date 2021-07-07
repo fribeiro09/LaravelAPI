@@ -14,6 +14,8 @@ class ServiceCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'services' => ServiceResource::collection($this->collection)
+        ];
     }
 }

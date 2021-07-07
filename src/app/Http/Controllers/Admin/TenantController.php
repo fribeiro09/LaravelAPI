@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TenantCollection;
+use App\Http\Resources\TenantResource;
 use Illuminate\Http\Request;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Validator;
@@ -23,18 +25,8 @@ class TenantController extends Controller
      */
     public function index()
     {
-        $tenants = $this->repository->latest()->paginate();
-        return response()->json($tenants);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $tenants = $this->repository->orderBy('id')->get();
+        return response(new TenantCollection($tenants), 200);
     }
 
     /**
@@ -67,21 +59,10 @@ class TenantController extends Controller
     public function show($id)
     {
         if(!$tenant = Tenant::find($id)) {
-            return response()->json(['message' => 'Record not found',], 404);
+            return response()->json(['message' => 'Record not found'], 404);
         }
 
-        return response()->json($tenant);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return new TenantResource($tenant);
     }
 
     /**
@@ -120,7 +101,7 @@ class TenantController extends Controller
     public function destroy($id)
     {
         if(!$tenant = Tenant::find($id)) {
-            return response()->json(['message' => 'Record not found',], 404);
+            return response()->json(['message' => 'Record not found'], 404);
         }
 
         $tenant->delete();

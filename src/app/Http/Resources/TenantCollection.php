@@ -14,6 +14,8 @@ class TenantCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'tenants' => TenantResource::collection($this->collection)
+        ];
     }
 }

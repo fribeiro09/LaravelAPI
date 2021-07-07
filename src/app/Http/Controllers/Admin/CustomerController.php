@@ -26,20 +26,8 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customers = Customer::all();
-
-        //return response()->json($customers);
+        $customers = $this->repository->orderBy('id')->get();
         return response(new CustomerCollection($customers), 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -71,24 +59,11 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::find($id);
-
-        if(!$customer) {
-            return response()->json(['message' => 'Record not found',], 404);
+        if(!$customer = Customer::find($id)) {
+            return response()->json(['message' => 'Record not found'], 404);
         }
 
         return new CustomerResource($customer);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -100,7 +75,22 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $this->id = $id;
+        $validator = Validator::make($data, CustomerValidator($id));
+
+        if(!$customer = Customer::find($id)) {
+            return response()->json(['message' => 'Record not found',], 404);
+        }
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors(), 'message' => 'Validation Error'], 422);
+        }
+
+        $customer->fill($data);
+        $customer->save();
+
+        return response()->json($customer, 200);
     }
 
     /**
@@ -111,6 +101,12 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if(!$customer = Customer::find($id)) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
+
+        $customer->delete();
+
+        return response(['message' => 'The Record id #'.$id.' has been deleted'], 200);
     }
 }

@@ -3,10 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderServiceCollection;
+use App\Http\Resources\OrderServiceResource;
+use App\Models\OrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OrderServiceController extends Controller
 {
+    private $repository;
+
+    public function __construct(OrderService $orderService)
+    {
+        $this->repository = $orderService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,17 +25,8 @@ class OrderServiceController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $orderServices = $this->repository->orderBy('id')->get();
+        return response(new OrderServiceCollection($orderServices), 200);
     }
 
     /**
@@ -35,7 +37,17 @@ class OrderServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $validator = Validator::make($data, OrderServiceValidator());
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors(), 'message' => 'Validation Error'], 422);
+        }
+
+        $this->repository->fill($data);
+        $this->repository->save();
+
+        return response()->json($this->repository, 201);
     }
 
     /**
@@ -46,18 +58,11 @@ class OrderServiceController extends Controller
      */
     public function show($id)
     {
-        //
-    }
+        if(!$orderService = OrderService::find($id)) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return new OrderServiceResource($orderService);
     }
 
     /**
@@ -69,7 +74,22 @@ class OrderServiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $this->id = $id;
+        $validator = Validator::make($data, OrderServiceValidator());
+
+        if(!$orderService = OrderService::find($id)) {
+            return response()->json(['message' => 'Record not found',], 404);
+        }
+
+        if($validator->fails()){
+            return response(['error' => $validator->errors(), 'message' => 'Validation Error'], 422);
+        }
+
+        $orderService->fill($data);
+        $orderService->save();
+
+        return response()->json($orderService, 200);
     }
 
     /**
@@ -80,6 +100,12 @@ class OrderServiceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if(!$orderService = OrderService::find($id)) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
+
+        $orderService->delete();
+
+        return response(['message' => 'The Record id #'.$id.' has been deleted'], 200);
     }
 }

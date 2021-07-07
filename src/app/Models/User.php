@@ -18,7 +18,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'tenant_id', 'name', 'email', 'password',
     ];
 
     /**
@@ -39,7 +39,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    // Rest omitted for brevity
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'id');
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
